@@ -16,3 +16,5 @@ RUN apt install -y openjdk-8-jdk
 
 RUN pip install gym
 RUN pip install minerl
+
+ENV PYTHONPATH "$(PYTHONPATH):/workspace/minecraft"
