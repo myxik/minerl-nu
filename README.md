@@ -14,7 +14,8 @@ This repository currently does not support reproducibility and it is unclear, wh
 <ol>
 <li>Clone this repository</li>
 <li>Build a container using <code>make build</code></li>
-<li>Install TurboVNC, it is located in <code>setup</code> folder</li>
+<li>Install TurboVNC and VGL, it is located in <code>setup</code> folder using <code>sudo dpkg --install ...</code></li>
+<li>Launch Turbovnc using <code>/opt/TurboVNC/bin/vncserver</code> and configure</li>
 <li>Set <code>DESKTOP</code> environmental variable to :1</li>
 <li>Download a dataset with a command <code>python3 -m minerl.data.download --environment "MineRLTreechop-v0"</code></li>
 <li>Run agent with <code>python3 minecraft/train_agent.py</code></li>
