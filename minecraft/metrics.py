@@ -36,3 +36,5 @@ def gather_metrics(rew: List[int], attack: List[int], episode: int) -> None:
     ax.plot(np.arange(len(attack)), cum_atk)
     ax.set_title(f"Cummulative attack on episode {episode}")
     fig.savefig(f"/workspace/viz/cattack_{episode}.png")
+
+    plt.close('all')

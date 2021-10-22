@@ -3,3 +3,5 @@ logs
 minecraft/__pycache__
 **/__pycache__
 **/**/__pycache__
+tensorboard_logs/
+checkpoints.zip

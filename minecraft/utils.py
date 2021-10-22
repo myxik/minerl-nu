@@ -5,12 +5,16 @@ import numpy as np
 from typing import Dict, Any
 from torch import Tensor
 
+from minecraft.const import ACTION_SPACE
+
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def select_action(obs: np.ndarray, eps: float, model: Any) -> Dict:
     sample = random.random()
     if sample > eps:
         with torch.no_grad():
-            return make_action(model(obs.unsqueeze(0).unsqueeze(1)))
+            return make_softmax_action(model(obs.unsqueeze(0).unsqueeze(1).to(DEVICE)))
     else:
         return make_dummy_action(model.num_actions)
 
@@ -25,7 +29,7 @@ def eps_decay(
         return eps_start - eps_decay * steps_done
 
 
-def make_action(out: Tensor) -> Dict:
+def make_sigmoided_action(out: Tensor) -> Dict:
     camera_out = out[:, 2].item()
     sigmoided_out = torch.sigmoid(out).squeeze(0)
     return dict(
@@ -44,16 +48,33 @@ def make_action(out: Tensor) -> Dict:
 
 
 def make_dummy_action(num_actions: int) -> Dict:
-    return dict(
-        {
-            "attack": random.randint(0, 1),
-            "back": random.randint(0, 1),
-            "camera": np.array([random.randint(-180, 180), random.randint(-180, 180)]),
-            "forward": random.randint(0, 1),
-            "jump": random.randint(0, 1),
-            "left": random.randint(0, 1),
-            "right": random.randint(0, 1),
-            "sneak": random.randint(0, 1),
-            "sprint": random.randint(0, 1),
-        }
-    )
+    return action_to(random.randint(0, 4))
+
+
+def make_softmax_action(out: Tensor) -> Dict:
+    softmax_out = torch.softmax(out, 1)
+    action = torch.argmax(softmax_out, axis=1).item()
+    return action_to(action)
+
+
+def action_to(num: int) -> Dict:
+    act = {
+        "forward": 1,
+        "back": 0,
+        "left": 0,
+        "right": 0,
+        "jump": 0,
+        "sneak": 0,
+        "sprint": 0,
+        "attack" : 1,
+        "camera": [0,0],
+    }
+    if num == 1:
+        act['forward'] = 0
+    elif num == 2 :
+        act['jump'] = 1
+    elif num == 3:
+        act['camera'] = [0, -30]
+    elif num == 4:
+        act['camera'] = [0, 30]
+    return act.copy()
