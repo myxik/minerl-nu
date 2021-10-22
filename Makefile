@@ -27,7 +27,7 @@ attach:
 	docker attach $(NAME)
 
 run-dev:
-	docker run --rm -it -p 6080:80 -p $(PORT):$(PORT) --runtime=nvidia \
+	docker run --rm -it -p 3333:6006 -p $(PORT):$(PORT) --runtime=nvidia \
 	-e NVIDIA_VISIBLE_DEVICES=$(GPUS_OPTION) \
 	-v $(PROJ_ROOT):/workspace \
 	--name=$(NAME) \

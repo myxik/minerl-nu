@@ -17,4 +17,8 @@ RUN apt install -y openjdk-8-jdk
 RUN pip install gym
 RUN pip install minerl
 
-ENV PYTHONPATH "$(PYTHONPATH):/workspace/minecraft"
+RUN apt update && apt install -y cmake libopenmpi-dev python3-dev zlib1g-dev
+
+RUN pip install stable-baselines3[extra]
+
+ENV PYTHONPATH "$(PYTHONPATH):/workspace"
