@@ -12,7 +12,9 @@ from minecraft.transform import preprocess
 from minecraft.metrics import gather_metrics
 
 
-TARGET_NET = DQN(9)
+TARGET_NET = DQN(4)
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+TARGET_NET.to(DEVICE)
 
 
 def optimize_Q(
@@ -26,13 +28,13 @@ def optimize_Q(
         actions.append(action)
         rewards.append(torch.tensor(rew))
 
-    y_hat = model(torch.stack(imgs).unsqueeze(1)).sum(1)
-    Q_a = torch.stack(rewards)
+    y_hat = model(torch.stack(imgs).unsqueeze(1).to(DEVICE)).sum(1)
+    Q_a = torch.stack(rewards).to(DEVICE)
     if done:
         TARGET_NET.load_state_dict(model.state_dict())
     else:
-        Q_a += TARGET_NET(torch.stack(imgs).unsqueeze(1)).sum(1) * gamma
-    criterion = nn.MSELoss()
+        Q_a += TARGET_NET(torch.stack(imgs).unsqueeze(1).to(DEVICE)).sum(1) * gamma
+    criterion = nn.HuberLoss()
     loss = criterion(y_hat, Q_a)
     optimizer.zero_grad()
     loss.backward()
@@ -47,21 +49,22 @@ def train_fn():
 
     done = False
 
-    batch_size = 32
-    model = DQN(9)
+    batch_size = 64
+    model = DQN(4)
+    model.to(DEVICE)
     eps_start = 1.0
     eps_end = 0.1
-    num_steps = 200
+    num_steps = 2000
     optimizer = torch.optim.RMSprop(model.parameters())
 
-    for episode in range(10):
+    for episode in range(30):
         initial_obs = preprocess(env.reset()["pov"])  # INITIALIZING SEQUENCE
         obs = initial_obs
 
         step_num = 0
         ep_rews = []
         ep_attack = []
-        while (not done) and (step_num != 1000):
+        while (not done) and (step_num<=num_steps):
             eps = eps_decay(step_num, eps_start, eps_end, num_steps)
             prev_obs = obs
             action = select_action(obs, eps, model)
@@ -77,6 +80,7 @@ def train_fn():
             step_num += 1
             ep_rews.append(rew)
             ep_attack.append(1 if action["attack"] == 1 else 0)
+        print(f"Reward is {sum(ep_rews)}")
         gather_metrics(ep_rews, ep_attack, episode)
 
 
