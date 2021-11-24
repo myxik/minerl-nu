@@ -4,15 +4,16 @@ import minerl
 import torch.nn as nn
 
 from typing import List, Any
+from tqdm import tqdm
 
 from minecraft.experience_replay import ExperienceReplay
-from minecraft.model.dqn import DQN
+from minecraft.model.res_dqn import DQN
 from minecraft.utils import select_action, eps_decay
 from minecraft.transform import preprocess
 from minecraft.metrics import gather_metrics
 
 
-TARGET_NET = DQN(4)
+TARGET_NET = DQN(4, depth=50)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 TARGET_NET.to(DEVICE)
 
@@ -50,14 +51,14 @@ def train_fn():
     done = False
 
     batch_size = 64
-    model = DQN(4)
+    model = DQN(4, depth=50)
     model.to(DEVICE)
     eps_start = 1.0
     eps_end = 0.1
     num_steps = 2000
     optimizer = torch.optim.RMSprop(model.parameters())
 
-    for episode in range(30):
+    for episode in tqdm(range(30)):
         initial_obs = preprocess(env.reset()["pov"])  # INITIALIZING SEQUENCE
         obs = initial_obs
 

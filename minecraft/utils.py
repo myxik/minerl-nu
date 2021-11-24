@@ -48,7 +48,7 @@ def make_sigmoided_action(out: Tensor) -> Dict:
 
 
 def make_dummy_action(num_actions: int) -> Dict:
-    return action_to(random.randint(0, 4))
+    return action_to(random.randint(0, 3))
 
 
 def make_softmax_action(out: Tensor) -> Dict:
@@ -69,12 +69,16 @@ def action_to(num: int) -> Dict:
         "attack" : 1,
         "camera": [0,0],
     }
-    if num == 1:
+    if num == 0:
         act['forward'] = 0
-    elif num == 2 :
+    elif num == 1:
         act['jump'] = 1
-    elif num == 3:
+    elif num == 2:
         act['camera'] = [0, -30]
-    elif num == 4:
+    elif num == 3:
         act['camera'] = [0, 30]
+    elif num == 4:
+        act['camera'] = [22.5, 0]
+    elif num == 5:
+        act['camera'] = [-22.5, 0]
     return act.copy()
