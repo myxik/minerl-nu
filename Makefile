@@ -1,6 +1,6 @@
 NAME?=myx_rl
 GPUS?=all
-PORT?=5901
+PORT?=1111
 ifeq ($(GPUS), none)
 	GPUS_OPTION=
 else
@@ -27,7 +27,7 @@ attach:
 	docker attach $(NAME)
 
 run-dev:
-	docker run --rm -it -p 3333:6006 -p $(PORT):$(PORT) --runtime=nvidia \
+	docker run --rm -it -p $(PORT):5901 --runtime=nvidia \
 	-e NVIDIA_VISIBLE_DEVICES=$(GPUS_OPTION) \
 	-v $(PROJ_ROOT):/workspace \
 	--name=$(NAME) \

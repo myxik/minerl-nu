@@ -9,7 +9,8 @@ RUN apt update && apt install -y curl \
     htop \
     gcc \
     xvfb \
-    python-opengl\
+    python-opengl \
+    ffmpeg \
     x11-xserver-utils tightvncserver
 
 RUN apt install -y openjdk-8-jdk
