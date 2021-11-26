@@ -21,13 +21,19 @@ This repository currently does not support reproducibility and it is unclear, wh
 <li>Run agent with <code>python3 minecraft/train_agent.py</code></li>
 </ol>
 
+## Implemented Algorithms
+
+<ol>
+<li>DQN</li>
+<li>ResDQN</li>
+<li>Wolpertinger</li>
+</ol>
+
 ## Further Research
 
 This repository will be enlarged with different models, customizable models and different enviornments. Hopefully, reproducibility will not be an issue. In order to support us, drop us an email on how you liked organization of this repo :)
 
 The TODO list for the nearest time is:
 <ul>
-<li>Write an agent that will be able to complete an episode of TreeChop</li>
-<li>Add config support for better one-line experimenting</li>
-<li>more later</li>
+<li>Write an agent that will be able to complete an episode</li>
 </ul>
