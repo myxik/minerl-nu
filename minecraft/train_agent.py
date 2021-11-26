@@ -20,20 +20,20 @@ def train_fn():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger = SummaryWriter()
 
-    env = Monitor(LargeActionWrapper(PovWrapper(gym.make("MineRLTreechop-v0"))), "./video_rep", force=True)
+    env = Monitor(SimpleActionWrapper(PovWrapper(gym.make("MineRLTreechop-v0"))), "./video_rep", force=True, video_callable=lambda episode_id: True)
     done = False
 
     exp_rep = ExperienceReplay(10000)
-    batch_size = 128
+    batch_size = 64
 
     eps_start = 1.
-    eps_end = 0.001
-    num_steps = 2500
+    eps_end = 0.01
+    num_steps = 3000
 
-    # model = DQN_model(4, 0.99, device, logger)
-    model = Wolpertinger(4096, 9, 1, 0.99, device, logger)
+    model = DQN_model(4, 0.9, device, logger)
+    # model = Wolpertinger(4096, 9, 1, 0.99, device, logger)
 
-    for episode in range(30):
+    for episode in range(5):
         obs = env.reset()
         done = False
 
@@ -49,7 +49,7 @@ def train_fn():
 
             if len(exp_rep) > batch_size:
                 trainsample = exp_rep.sample(batch_size)
-                model.optimize_policy(trainsample, done, step_num)
+                model.optimize_policy(trainsample, done, step_num, episode)
             
             step_num += 1
             ep_rews.append(rew)

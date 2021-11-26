@@ -36,7 +36,7 @@ class Wolpertinger:
         self.n_actions_contracted = n_actions_contracted
         self.n_actions = n_actions
 
-    def optimize_policy(self, trainsample, done, step_num):
+    def optimize_policy(self, trainsample, done, step_num, episode):
         prev_states = []
         actions = torch.empty(size=(len(trainsample), 1))
         rewards = torch.empty(size=(len(trainsample), 1))
@@ -71,8 +71,8 @@ class Wolpertinger:
         self.actor_optimizer.step()
 
         self.update_targets()
-        self.logger.add_scalar("Loss", critic_loss.item(), step_num)
-        self.logger.add_scalar("Q_a", y_i.mean().item(), step_num)
+        self.logger.add_scalar(f"Loss/{episode}", critic_loss.item(), step_num)
+        self.logger.add_scalar(f"Q_a/{episode}", y_i.mean().item(), step_num)
 
     def update_targets(self):
         self.soft_update(self.actor_target, self.actor, 0.2)

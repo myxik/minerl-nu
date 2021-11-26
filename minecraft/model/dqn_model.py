@@ -21,7 +21,7 @@ class DQN_model:
         
         self.gamma = gamma
 
-    def optimize_policy(self, trainsample, done, step_num):
+    def optimize_policy(self, trainsample, done, step_num, episode):
         prev_states = []
         actions = []
         rewards = []
@@ -41,8 +41,8 @@ class DQN_model:
         loss = criterion(y_hat, Q_a)
         self.optimizer.zero_grad()
         loss.backward()
-        self.logger.add_scalar("Loss", loss.item(), step_num)
-        self.logger.add_scalar("Q_a", Q_a.mean().item(), step_num)
+        self.logger.add_scalar(f"Loss/{episode}", loss.item(), step_num)
+        self.logger.add_scalar(f"Q_a/{episode}", Q_a.mean().item(), step_num)
         self.optimizer.step()
 
     def select_action(self, obs, eps):
